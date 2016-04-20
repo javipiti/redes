@@ -25,6 +25,8 @@ private:
 	char carRec;
 	char cadenaEnviar[MAXCARACTERES];
 	int cuantos;
+	bool modoFichero;
+	ofstream ficheroSal;
 public:
 	CosasRedes();
 	//Ejecuta el programa, si devuelve false hay error
@@ -33,7 +35,6 @@ public:
 	//Si es true, hay que salir
 	bool enviarAlgo(HANDLE PuertoCOM);
 	void EnviarFichero(HANDLE PuertoCOM);
-	void RecibirFichero (HANDLE PuertoCOM);
 	void recibirAlgo(HANDLE PuertoCOM);
 
 	~CosasRedes();

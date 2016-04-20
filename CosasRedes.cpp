@@ -1,5 +1,5 @@
 /*
- /*
+ *
  * CosasRedes.cpp
  *
  *  Created on: 24 de feb. de 2016
@@ -12,6 +12,7 @@ CosasRedes::CosasRedes() {
 	carRec = 0;
 	car = 0;
 	cuantos = 0;
+	modoFichero = false;
 }
 
 bool CosasRedes::ejecutar(HANDLE PuertoCOM) {
@@ -100,7 +101,7 @@ bool CosasRedes::enviarAlgo(HANDLE PuertoCOM) {
 
 				tramaEnv->enviarTrama(PuertoCOM);
 			}
-			if(car==61){
+			if (car == 61) {
 				EnviarFichero(PuertoCOM);
 			}
 			break;
@@ -131,64 +132,39 @@ void CosasRedes::EnviarFichero(HANDLE PuertoCOM) {
 	//TODO : enviar inicio de fichero
 	ifstream lectura;
 	lectura.open("frc.txt");
-	char lect[1];
+	char lect[255];
 	int contador = 0;
 	TramaDatos *tramaLec = new TramaDatos();
+	//Al abrir el fichero enviamos el caracter suprimir para indicarlo
+	EnviarCaracter(PuertoCOM, 127);
 	if (lectura.is_open() == true) {
 		while (lectura.eof() == false) {
-			//RecibirAlgo();
-			lectura.read(lect, 1);
-			lectura.seekg(lectura.tellg() + 1);
-			tramaLec->setDato(lect[0]);
-			contador++;
-			if (contador == 254 || lectura.eof()) {
-				tramaLec->enviarTrama(PuertoCOM);
-				delete tramaLec;
-				tramaLec = new TramaDatos();
-				contador = 0;
+			recibirAlgo(PuertoCOM);
+			lectura.read(lect, 254);
+			contador = lectura.gcount();
+			for (int i = 0; i < contador; i++) {
+				tramaLec->setDato(lect[0]);
 			}
-		}
-		//TODO ENVIAR FINAL DE FICHERO
-		lectura.close();
-	}
-
-}
-void CosasRedes::RecibirFichero(HANDLE PuertoCOM) {
-	ofstream FichSal;
-	char cadRec[254];
-	unsigned char longitud;
-	unsigned char BCE;
-	unsigned char BCEr;
-	FichSal.open("frcR.txt");
-	if (FichSal.is_open()) {
-		while (1) //FIN DE FICHERO, TODO
-		{
-			longitud = RecibirCaracter(PuertoCOM);
-			BCE = RecibirCaracter(PuertoCOM);
-			RecibirCadena(PuertoCOM, cadRec, longitud);
-			BCEr = cadRec[0];
-			for (int i = 1; i < longitud; i++) {
-				BCEr = BCEr ^ cadRec[i];
-			}
-			if (BCE == BCEr) {
-				FichSal.write(cadRec, 254);
-			}
+			lect[contador] = '\0';
+			tramaLec->enviarTrama(PuertoCOM);
+			delete tramaLec;
+			tramaLec = new TramaDatos();
+			contador = 0;
 		}
 	}
-
+	//Cuando el fichero acaba enviamos el caracter retroceso para indicarlo
+	EnviarCaracter(PuertoCOM, 8);
+	lectura.close();
 }
 
 void CosasRedes::recibirAlgo(HANDLE PuertoCOM) {
 	unsigned char longitud;
-	//TODO RECIBIR INICIO DE FICHERO
 	carRec = RecibirCaracter(PuertoCOM);
 	unsigned char BCE;
 	unsigned char BCEt; //Para control
 	if (carRec == 22) //ESTAMOS RECIBIENDO TRAMA
 			{
 		unsigned char tipo;
-		//TODO Hacer cosas con estos caracteres, en esta pract solo imprimir, se puede almacenar
-		//Con los while nos aseguramos de recibir los datos pertinentes, ya que las tramas se envían seguidas, el ultimo falla
 		carRec = 0;
 		while (carRec == 0) {
 			carRec = RecibirCaracter(PuertoCOM); //Direccion
@@ -196,7 +172,6 @@ void CosasRedes::recibirAlgo(HANDLE PuertoCOM) {
 		if (carRec != 'T')
 			cout << "ERROR en Dir";
 		carRec = 0;
-
 		while (carRec == 0) {
 			carRec = RecibirCaracter(PuertoCOM);
 		}
@@ -230,11 +205,15 @@ void CosasRedes::recibirAlgo(HANDLE PuertoCOM) {
 			}
 
 			if (BCE == BCEt) {
-				cout << "Se ha recibido una trama de datos. Su contenido es:"
-						<< endl;
-				for (int i = 0; i < longitud; i++) {
-					cout << Datos[i];
-				}
+				if (modoFichero == false) {
+					cout
+							<< "Se ha recibido una trama de datos. Su contenido es:"
+							<< endl;
+					for (int i = 0; i < longitud; i++) {
+						cout << Datos[i];
+					}
+				} else
+					ficheroSal.write(Datos, longitud);
 			} else
 				cout << "La trama no es correcta" << endl;
 			break;
@@ -254,7 +233,13 @@ void CosasRedes::recibirAlgo(HANDLE PuertoCOM) {
 			cout << "Error al recibir tipo de trama" << endl;
 			break;
 		}
-	} else if (carRec != 0)
+	} else if (carRec == 8) {
+		modoFichero = false;
+		ficheroSal.close();
+	} else if (carRec == 127) {
+		modoFichero = true;
+		ficheroSal.open("frcR.txt");
+	} else
 		cout << carRec;
 }
 
