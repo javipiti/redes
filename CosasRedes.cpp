@@ -55,6 +55,7 @@ bool CosasRedes::enviarAlgo(HANDLE PuertoCOM) {
 							{
 						datosEnv->setDato('\0');
 						datosEnv->enviarTrama(PuertoCOM);
+						recibirAlgo(PuertoCOM);
 					}
 				}
 				cuantos = 0;
