@@ -34,7 +34,7 @@ bool CosasRedes::ejecutar(HANDLE PuertoCOM) {
 bool CosasRedes::enviarAlgo(HANDLE PuertoCOM) {
 	car = getch();
 	int queTrama = 0;
-	if (cuantos < 600 || car == '\0' || car == 8 || car == 27) { //Comprobacion de tamaño max
+	if (cuantos < 600 || car == '\0' || car == 8 || car == 27) { //Comprobacion de tamaÃ±o max
 		switch (car) { //4
 		case 27:
 			return true;
@@ -92,7 +92,7 @@ bool CosasRedes::enviarAlgo(HANDLE PuertoCOM) {
 						break;
 					default:
 						cout
-								<< "Valor no válido. Por favor, introduzca un valor entre 1 y 4."
+								<< "Valor no vÃ¡lido. Por favor, introduzca un valor entre 1 y 4."
 								<< endl;
 						break;
 					}
@@ -136,7 +136,7 @@ void CosasRedes::EnviarFichero(HANDLE PuertoCOM) {
 	TramaDatos *tramaLec = new TramaDatos();
 	if (lectura.is_open() == true) {
 		while (lectura.eof() == false) {
-
+			//RecibirAlgo();
 			lectura.read(lect, 1);
 			lectura.seekg(lectura.tellg() + 1);
 			tramaLec->setDato(lect[0]);
@@ -188,7 +188,7 @@ void CosasRedes::recibirAlgo(HANDLE PuertoCOM) {
 			{
 		unsigned char tipo;
 		//TODO Hacer cosas con estos caracteres, en esta pract solo imprimir, se puede almacenar
-		//Con los while nos aseguramos de recibir los datos pertinentes, ya que las tramas se envían seguidas, el ultimo falla
+		//Con los while nos aseguramos de recibir los datos pertinentes, ya que las tramas se envÃ­an seguidas, el ultimo falla
 		carRec = 0;
 		while (carRec == 0) {
 			carRec = RecibirCaracter(PuertoCOM); //Direccion
