@@ -235,9 +235,11 @@ void CosasRedes::recibirAlgo(HANDLE PuertoCOM) {
 			break;
 		}
 	} else if (carRec == 8) {
+		cout<<"Fichero enviado."<<endl;
 		modoFichero = false;
 		ficheroSal.close();
 	} else if (carRec == 127) {
+		cout<<"Enviando fichero..."<<endl;
 		modoFichero = true;
 		ficheroSal.open("frcR.txt");
 	} else
