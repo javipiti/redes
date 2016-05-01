@@ -33,9 +33,9 @@ public:
 	bool ejecutar(HANDLE PuertoCOM);
 
 	//Si es true, hay que salir
-	bool enviarAlgo(HANDLE PuertoCOM);
-	void EnviarFichero(HANDLE PuertoCOM);
-	void recibirAlgo(HANDLE PuertoCOM);
+	bool EnviarAlgo(HANDLE PuertoCOM);
+	bool EnviarFichero(HANDLE PuertoCOM);
+	void RecibirAlgo(HANDLE PuertoCOM);
 
 	~CosasRedes();
 };
