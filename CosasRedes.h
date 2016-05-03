@@ -21,12 +21,15 @@ const int MAXCARACTERES = 602;
 
 class CosasRedes {
 private:
+	enum MS { ninguno, maestro, esclavo};
 	char car;
 	char carRec;
 	char cadenaEnviar[MAXCARACTERES];
 	int cuantos;
 	bool modoFichero;
 	ofstream ficheroSal;
+	MS tipoProtocolo;
+
 public:
 	CosasRedes();
 	//Ejecuta el programa, si devuelve false hay error
