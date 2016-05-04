@@ -125,29 +125,27 @@ bool CosasRedes::EnviarAlgo(HANDLE PuertoCOM) {
 						cout << "Fichero enviado con éxito";
 				}
 				//Activación (desactivación?) protocolo Maestro-Esclavo
-				if (car == 62 && tipoProtocolo == ninguno)
-				{
-					cout<<"Activando protocolo maestro-esclavo."
-						"Debe elegir un tipo de estación. Pulse 1 para Maestro o 2 Para esclavo. Pulse 3 para salir";
+				if (car == 62 && tipoProtocolo == ninguno) {
+					cout
+							<< "Activando protocolo maestro-esclavo."
+									"Debe elegir un tipo de estación. Pulse 1 para Maestro o 2 Para esclavo. Pulse 3 para salir";
 					int tipo = 0;
 					do {
-						cin>> tipo;
+						cin >> tipo;
 					} while (tipo < 1 || tipo > 3);
-					if (tipo == 1)
-					{
+					if (tipo == 1) {
 						tipoProtocolo = maestro;
 						//Usamos el caracter 96 (^) para señalizar que el emisor es maestro
 						EnviarCaracter(PuertoCOM, 96);
 					}
-					if (tipo == 2)
-					{
+					if (tipo == 2) {
 						tipoProtocolo = esclavo;
 						//Usamos el caracter 36 ($) para señalizar que el emisor es esclavo
 						EnviarCaracter(PuertoCOM, 36);
 					}
 				}
-			}
-			else cout<< "Esta estación no puede enviar";
+			} else
+				cout << "Esta estación no puede enviar";
 			break;
 			//Salto de línea
 		case 13:
@@ -217,8 +215,7 @@ bool CosasRedes::EnviarFichero(HANDLE PuertoCOM) {
 		}
 	}
 	//Cuando el fichero acaba enviamos el caracter retroceso
-	if (fin == false)
-		EnviarCaracter(PuertoCOM, 8);
+	EnviarCaracter(PuertoCOM, 8);
 	lectura.close();
 	return fin;
 }
@@ -228,8 +225,9 @@ void CosasRedes::RecibirAlgo(HANDLE PuertoCOM) {
 	carRec = RecibirCaracter(PuertoCOM);
 	unsigned char BCE;
 	unsigned char BCEt; //Para control
-	if (carRec == 22) //ESTAMOS RECIBIENDO TRAMA
-			{
+	switch (carRec) {
+	case 22:
+		//ESTAMOS RECIBIENDO TRAMA
 		unsigned char tipo;
 		carRec = 0;
 		while (carRec == 0) {
@@ -299,20 +297,30 @@ void CosasRedes::RecibirAlgo(HANDLE PuertoCOM) {
 			cout << "Error al recibir tipo de trama" << endl;
 			break;
 		}
-	} else if (carRec == 8) {
+		break;
+	case 8:
 		cout << "Fichero recibido." << endl;
 		modoFichero = false;
 		ficheroSal.close();
-	} else if (carRec == 127) {
+		break;
+	case 127:
 		cout << "Recibiendo fichero..." << endl;
 		modoFichero = true;
 		ficheroSal.open("frcR.txt");
-	} else if (carRec == 36 && tipoProtocolo == ninguno) {
-		tipoProtocolo == maestro;
-	} else if (carRec == 96 && tipoProtocolo == ninguno) {
-		tipoProtocolo == esclavo;
-	} else
+		break;
+	case 36:
+		if (tipoProtocolo == ninguno)
+			tipoProtocolo == maestro;
+		//TODO Pedirle hacer sondeo o seleccion
+		break;
+	case 96:
+		if (tipoProtocolo == ninguno)
+			tipoProtocolo == esclavo;
+		break;
+	default:
 		cout << carRec;
+		break;
+	}
 }
 
 CosasRedes::~CosasRedes() {
