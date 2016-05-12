@@ -26,7 +26,7 @@ bool CosasRedes::ejecutar(HANDLE PuertoCOM) {
 	}
 	bool salir = false;
 
-	//Se ejecuta hasta que se recibe la señal de salida (pulsación de la tecla ESC)
+	//Se ejecuta hasta que se recibe la seÃ±al de salida (pulsaciÃ³n de la tecla ESC)
 	while (salir == false) {
 		RecibirAlgo(PuertoCOM);
 		if (kbhit()) {
@@ -36,24 +36,24 @@ bool CosasRedes::ejecutar(HANDLE PuertoCOM) {
 	CerrarPuerto(PuertoCOM);
 	return true;
 }
-//Este método es llamado en el momento en que se pulsa una tecla
-//Dependiendo de la tecla pulsada hace un acción u otra
+//Este mÃ©todo es llamado en el momento en que se pulsa una tecla
+//Dependiendo de la tecla pulsada hace un acciÃ³n u otra
 bool CosasRedes::EnviarAlgo(HANDLE PuertoCOM) {
 	car = getch();
 	bool salir = false;
 	int queTrama = 0;
-	//Se impide escribir más si ya se han escrito 600 caracteres
-	if (cuantos < 600 || car == '\0' || car == 8 || car == 27) { //Comprobacion de tamaÃ±o max
+	//Se impide escribir mÃ¡s si ya se han escrito 600 caracteres
+	if (cuantos < 600 || car == '\0' || car == 8 || car == 27) { //Comprobacion de tamaÃƒÂ±o max
 
 		switch (car) {
 		case 27:
 			salir = true;
 			break;
-			//Teclas de función
+			//Teclas de funciÃ³n
 		case '\0':
 			car = getch();
 			if (tipoProtocolo != esclavo) {
-				//Envío del mensaje escrito por pantalla
+				//EnvÃ­o del mensaje escrito por pantalla
 				if (car == 59) {
 					TramaDatos *datosEnv = new TramaDatos();
 					for (int i = 0; i < cuantos; i++) {
@@ -73,7 +73,7 @@ bool CosasRedes::EnviarAlgo(HANDLE PuertoCOM) {
 					cuantos = 0;
 					cout << endl;
 				}
-				//Envío de una trama de control
+				//EnvÃ­o de una trama de control
 				if (car == 60) {
 
 					cout << "Introduzca el tipo de trama de control a enviar:"
@@ -107,7 +107,7 @@ bool CosasRedes::EnviarAlgo(HANDLE PuertoCOM) {
 							break;
 						default:
 							cout
-									<< "Valor no válido. Por favor, introduzca un valor entre 1 y 4."
+									<< "Valor no vÃ¡lido. Por favor, introduzca un valor entre 1 y 4."
 									<< endl;
 							break;
 						}
@@ -115,39 +115,39 @@ bool CosasRedes::EnviarAlgo(HANDLE PuertoCOM) {
 
 					tramaEnv->enviarTrama(PuertoCOM);
 				}
-				//Envío de un fichero
+				//EnvÃ­o de un fichero
 				if (car == 61) {
 					cout << "Enviando fichero";
 					salir = EnviarFichero(PuertoCOM);
 					if (salir == true)
 						modoFichero = false;
 					else
-						cout << "Fichero enviado con éxito";
+						cout << "Fichero enviado con Ã©xito";
 				}
-				//Activación (desactivación?) protocolo Maestro-Esclavo
+				//ActivaciÃ³n (desactivaciÃ³n?) protocolo Maestro-Esclavo
 				if (car == 62 && tipoProtocolo == ninguno) {
 					cout
 							<< "Activando protocolo maestro-esclavo."
-									"Debe elegir un tipo de estación. Pulse 1 para Maestro o 2 Para esclavo. Pulse 3 para salir";
+									"Debe elegir un tipo de estaciÃ³n. Pulse 1 para Maestro o 2 Para esclavo. Pulse 3 para salir";
 					int tipo = 0;
 					do {
 						cin >> tipo;
 					} while (tipo < 1 || tipo > 3);
 					if (tipo == 1) {
 						tipoProtocolo = maestro;
-						//Usamos el caracter 96 (^) para señalizar que el emisor es maestro
+						//Usamos el caracter 96 (^) para seÃ±alizar que el emisor es maestro
 						EnviarCaracter(PuertoCOM, 96);
 					}
 					if (tipo == 2) {
 						tipoProtocolo = esclavo;
-						//Usamos el caracter 36 ($) para señalizar que el emisor es esclavo
+						//Usamos el caracter 36 ($) para seÃ±alizar que el emisor es esclavo
 						EnviarCaracter(PuertoCOM, 36);
 					}
 				}
 			} else
-				cout << "Esta estación no puede enviar";
+				cout << "Esta estaciÃ³n no puede enviar";
 			break;
-			//Salto de línea
+			//Salto de lÃ­nea
 		case 13:
 			cout << endl;
 			cadenaEnviar[cuantos] = '\n';
@@ -159,7 +159,7 @@ bool CosasRedes::EnviarAlgo(HANDLE PuertoCOM) {
 			cuantos--;
 			cadenaEnviar[cuantos] = 0;
 			break;
-			//Resto de caracteres válidos
+			//Resto de caracteres vÃ¡lidos
 		default:
 			if (car >= 32 && car <= 126) {	     //6
 				cout << car;
@@ -174,7 +174,7 @@ bool CosasRedes::EnviarAlgo(HANDLE PuertoCOM) {
 }
 bool CosasRedes::EnviarFichero(HANDLE PuertoCOM) {
 	ifstream lectura;
-	//El nombre del archivo se puede cambiar aquí
+	//El nombre del archivo se puede cambiar aquÃ­
 	lectura.open("frc.txt");
 	char lect[255];
 	int contador = 0;
@@ -184,10 +184,10 @@ bool CosasRedes::EnviarFichero(HANDLE PuertoCOM) {
 	EnviarCaracter(PuertoCOM, 127);
 	if (lectura.is_open() == true) {
 		while (lectura.eof() == false && fin == false) {
-			//Si se pulsa ESC mientras se está enviando se cancela el envío
+			//Si se pulsa ESC mientras se estÃ¡ enviando se cancela el envÃ­o
 			if (kbhit()) {
 				if (getch() == 27) {
-					cout << "Envío cancelado";
+					cout << "EnvÃ­o cancelado";
 					fin = true;
 				}
 			}
@@ -197,11 +197,11 @@ bool CosasRedes::EnviarFichero(HANDLE PuertoCOM) {
 				//Intentamos leer 254 caracteres
 				lectura.read(lect, 254);
 				contador = lectura.gcount();
-				//Si no se ha leído ninguno hemos terminado de leer
+				//Si no se ha leÃ­do ninguno hemos terminado de leer
 				if (contador != 0) {
 					//Guardamos los caracteres en la trama y la enviamos
 					for (int i = 0; i < contador; i++) {
-						tramaLec->setDato(lect[0]);
+						tramaLec->setDato(lect[i]);
 					}
 					lect[contador] = '\0';
 					tramaLec->enviarTrama(PuertoCOM);
@@ -215,6 +215,7 @@ bool CosasRedes::EnviarFichero(HANDLE PuertoCOM) {
 		}
 	}
 	//Cuando el fichero acaba enviamos el caracter retroceso
+
 	EnviarCaracter(PuertoCOM, 8);
 	lectura.close();
 	return fin;
@@ -225,9 +226,8 @@ void CosasRedes::RecibirAlgo(HANDLE PuertoCOM) {
 	carRec = RecibirCaracter(PuertoCOM);
 	unsigned char BCE;
 	unsigned char BCEt; //Para control
-	switch (carRec) {
-	case 22:
-		//ESTAMOS RECIBIENDO TRAMA
+	if (carRec == 22) //ESTAMOS RECIBIENDO TRAMA
+			{
 		unsigned char tipo;
 		carRec = 0;
 		while (carRec == 0) {
@@ -297,30 +297,20 @@ void CosasRedes::RecibirAlgo(HANDLE PuertoCOM) {
 			cout << "Error al recibir tipo de trama" << endl;
 			break;
 		}
-		break;
-	case 8:
+	} else if (carRec == 8) {
 		cout << "Fichero recibido." << endl;
 		modoFichero = false;
 		ficheroSal.close();
-		break;
-	case 127:
+	} else if (carRec == 127) {
 		cout << "Recibiendo fichero..." << endl;
 		modoFichero = true;
 		ficheroSal.open("frcR.txt");
-		break;
-	case 36:
-		if (tipoProtocolo == ninguno)
-			tipoProtocolo == maestro;
-		//TODO Pedirle hacer sondeo o seleccion
-		break;
-	case 96:
-		if (tipoProtocolo == ninguno)
-			tipoProtocolo == esclavo;
-		break;
-	default:
+	} else if (carRec == 36 && tipoProtocolo == ninguno) {
+		tipoProtocolo == maestro;
+	} else if (carRec == 96 && tipoProtocolo == ninguno) {
+		tipoProtocolo == esclavo;
+	} else if (carRec != NULL)
 		cout << carRec;
-		break;
-	}
 }
 
 CosasRedes::~CosasRedes() {
